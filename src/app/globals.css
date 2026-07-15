@@ -155,6 +155,19 @@
   }
 }
 
+/* Theme-aware logo: show the version suited to the active theme's background
+   (white wordmark on dark, dark wordmark on light). Driven by data-theme. */
+.abc-logo-on-dark,
+.abc-logo-on-light {
+  display: none;
+}
+[data-theme="dark"] .abc-logo-on-dark {
+  display: block;
+}
+[data-theme="light"] .abc-logo-on-light {
+  display: block;
+}
+
 /* Respect the user's motion preference (mirrors the original). */
 @media (prefers-reduced-motion: reduce) {
   [data-abc-root] * {

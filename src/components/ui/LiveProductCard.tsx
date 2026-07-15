@@ -20,13 +20,13 @@ export function LiveProductCard() {
       >
         <div className="pointer-events-none absolute left-[-10%] top-[-40%] h-[340px] w-[340px] rounded-full opacity-[0.1] blur-[52px] [background:radial-gradient(circle,var(--green),transparent_65%)]" />
 
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-border bg-surface">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-border bg-[#0a0e1a]">
           <Image
             src={LIVE_PRODUCT.image}
             alt={`${LIVE_PRODUCT.name} app screenshot`}
             fill
             sizes="(max-width: 900px) 90vw, 40vw"
-            className="object-cover"
+            className="object-contain"
           />
         </div>
 
