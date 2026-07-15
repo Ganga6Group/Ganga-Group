@@ -1,3 +1,5 @@
+"use client";
+
 import { SITE, SOCIAL_LINKS } from "@/lib/data";
 import { Logo } from "@/components/ui/Logo";
 import { SocialButton } from "@/components/ui/SocialButton";

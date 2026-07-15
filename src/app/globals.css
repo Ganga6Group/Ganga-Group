@@ -8,7 +8,7 @@
    override them (e.g. the navbar's own timed transition).
    ============================================================ */
 @layer base {
-  /* Theme tokens: power every bg-*/text-*/border-* utility through the
+  /* Theme tokens: power every bg-*, text-*, border-* utility through the
      colour mappings in tailwind.config.ts. Flipping data-theme on the root
      re-resolves all of them at once. */
   [data-abc-root] {
