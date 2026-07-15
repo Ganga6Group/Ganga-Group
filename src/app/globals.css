@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Base layer — theme tokens, resets, universal transitions.
+   Placed in @layer base so component/utility classes can
+   override them (e.g. the navbar's own timed transition).
+   ============================================================ */
+@layer base {
+  /* Theme tokens: power every bg-*/text-*/border-* utility through the
+     colour mappings in tailwind.config.ts. Flipping data-theme on the root
+     re-resolves all of them at once. */
+  [data-abc-root] {
+    --bg: #0a0e1a;
+    --surface: #0f1729;
+    --glass: rgba(15, 23, 41, 0.55);
+    --text: #eaeef9;
+    --dim: #c4ccde;
+    --muted: #828ca6;
+    --accent: #4f9cff;
+    --accent-light: #8fc1ff;
+    --violet: #a78bfa;
+    --green: #46e08b;
+    --border: rgba(143, 193, 255, 0.13);
+    --border-soft: rgba(143, 193, 255, 0.07);
+  }
+
+  [data-abc-root][data-theme="light"] {
+    --bg: #eaedf5;
+    --surface: #f3f5fb;
+    --glass: rgba(243, 245, 251, 0.7);
+    --text: #0f1626;
+    --dim: #45506b;
+    --muted: #6b7590;
+    --accent: #2563eb;
+    --accent-light: #5b8df0;
+    --violet: #7c5ce0;
+    --green: #16a34a;
+    --border: rgba(37, 99, 235, 0.15);
+    --border-soft: rgba(37, 99, 235, 0.08);
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background: #0a0e1a;
+  }
+
+  /* Smooth cross-fade of every colour when the theme flips. */
+  [data-abc-root] *,
+  [data-abc-root] *::before,
+  [data-abc-root] *::after {
+    transition: background-color 0.55s ease, border-color 0.55s ease,
+      color 0.55s ease, box-shadow 0.35s ease;
+  }
+
+  /* Visible keyboard focus everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* ============================================================
+   Background textures — kept as component classes because the
+   multi-gradient grid mask and the SVG noise data-URI read far
+   more clearly here than as inline arbitrary Tailwind values.
+   ============================================================ */
+@layer components {
+  .abc-grid {
+    background-image: linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 60px 60px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000, transparent 85%);
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, #000, transparent 85%);
+  }
+
+  .abc-noise {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Custom chevron for the inquiry-form <select>s (the data-URI arrow can't be
+     expressed cleanly as a Tailwind arbitrary value because of its spaces). */
+  .abc-select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%237E88A2' stroke-width='2' stroke-linecap='round'><path d='M3 5l4 4 4-4'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+  }
+}
+
+/* ============================================================
+   Ambient keyframes (referenced via arbitrary animate-[...]
+   utilities in the components).
+   ============================================================ */
+@keyframes abc-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.55);
+    opacity: 0.35;
+  }
+}
+
+@keyframes abc-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(24px, -30px);
+  }
+}
+
+@keyframes abc-float2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-30px, 24px);
+  }
+}
+
+@keyframes abc-grid {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 60px 60px;
+  }
+}
+
+@keyframes abc-shine {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+@keyframes abc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Respect the user's motion preference (mirrors the original). */
+@media (prefers-reduced-motion: reduce) {
+  [data-abc-root] * {
+    animation: none !important;
+  }
+}
