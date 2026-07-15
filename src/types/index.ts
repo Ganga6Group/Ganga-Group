@@ -41,6 +41,8 @@ export interface Product {
   status: ProductStatus;
   /** Optional metadata line (e.g. install count) shown under the title. */
   meta?: string;
+  /** Optional app icon / screenshot in /public (e.g. "/apps/filego.png"). */
+  image?: string;
 }
 
 export interface TechCategory {

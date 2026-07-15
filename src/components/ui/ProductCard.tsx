@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Product } from "@/types";
 import { cn } from "@/utils/cn";
 import { Reveal } from "@/components/common/Reveal";
@@ -20,8 +21,21 @@ function StatusBadge({ status }: { status: Product["status"] }) {
 }
 
 /**
+ * The app icon tile. Shows the product image when one is set, falling back to
+ * the tinted placeholder tile (matching the card's accent) when it isn't.
+ */
+function AppIcon({ product, tone }: { product: Product; tone: "softAccent" | "softViolet" }) {
+  if (!product.image) return <IconTile tone={tone} className="h-[46px] w-[46px] rounded-[12px]" />;
+  return (
+    <div className="relative h-[46px] w-[46px] shrink-0 overflow-hidden rounded-[12px] border border-border bg-surface">
+      <Image src={product.image} alt={`${product.name} icon`} fill sizes="46px" className="object-cover" />
+    </div>
+  );
+}
+
+/**
  * Card for the "In development" and "Projects available to buy" grids.
- * Development cards lead with an icon-tile + status badge; acquisition cards
+ * Development cards lead with an icon + status badge; acquisition cards
  * carry a violet glow and violet accents.
  */
 export function ProductCard({ product }: { product: Product }) {
@@ -41,11 +55,13 @@ export function ProductCard({ product }: { product: Product }) {
         {isAcquisition ? (
           <>
             <div className="pointer-events-none absolute right-[-10%] top-[-30%] h-[200px] w-[200px] rounded-full opacity-[0.09] blur-[42px] [background:radial-gradient(circle,var(--violet),transparent_65%)]" />
-            <IconTile tone="softViolet" className="mb-[18px] h-[42px] w-[42px] rounded-[11px]" />
+            <div className="mb-[18px]">
+              <AppIcon product={product} tone="softViolet" />
+            </div>
           </>
         ) : (
           <div className="mb-[18px] flex items-center justify-between">
-            <IconTile tone="softAccent" className="h-[42px] w-[42px] rounded-[11px]" />
+            <AppIcon product={product} tone="softAccent" />
             <StatusBadge status={product.status} />
           </div>
         )}

@@ -1,11 +1,12 @@
+import Image from "next/image";
 import { LIVE_PRODUCT } from "@/lib/data";
 import { Reveal } from "@/components/common/Reveal";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ViewDetails } from "@/components/ui/ViewDetails";
 
 /**
- * The wide, featured card for the one shipped app. Two-column layout with a
- * striped screenshot placeholder, a pulsing "Live" badge, and a green glow.
+ * The wide, featured card for the one shipped app. Two-column layout with the
+ * app screenshot, a pulsing "Live" badge, and a green glow.
  */
 export function LiveProductCard() {
   return (
@@ -17,10 +18,14 @@ export function LiveProductCard() {
       >
         <div className="pointer-events-none absolute left-[-10%] top-[-40%] h-[340px] w-[340px] rounded-full opacity-[0.1] blur-[52px] [background:radial-gradient(circle,var(--green),transparent_65%)]" />
 
-        <div className="relative grid aspect-[4/5] place-items-center rounded-[18px] border border-border [background:repeating-linear-gradient(135deg,var(--surface),var(--surface)_12px,rgba(70,224,139,0.06)_12px,rgba(70,224,139,0.06)_24px)]">
-          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
-            app screenshot
-          </span>
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-border bg-surface">
+          <Image
+            src={LIVE_PRODUCT.image}
+            alt={`${LIVE_PRODUCT.name} app screenshot`}
+            fill
+            sizes="(max-width: 900px) 90vw, 40vw"
+            className="object-cover"
+          />
         </div>
 
         <div>

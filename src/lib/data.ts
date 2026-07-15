@@ -109,6 +109,7 @@ export const LIVE_PRODUCT = {
   description:
     "Match the shades, clear the board, and see how long you can keep a streak going. It's the sort of quiet puzzle you pick up while the kettle boils.",
   href: "/apps/colors-quad/",
+  image: "/apps/colors-quad.png",
 } as const;
 
 export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
@@ -116,6 +117,7 @@ export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
     name: "iLoveEmbroidery",
     status: "development",
     href: "/apps/iloveembroidery/",
+    image: "/apps/iloveembroidery.png",
     description:
       "Got an embroidery file but not the pricey desktop software? Open your Wilcom EMB and Tajima DST designs right on your phone, take a proper look, and send them on to whoever needs them.",
   },
@@ -123,6 +125,7 @@ export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
     name: "AI Discovery",
     status: "development",
     href: "/apps/ai-discovery/",
+    image: "/apps/ai-discovery.png",
     description:
       "The AI space moves quickly, so this keeps track for you. Browse 200+ tools with prices you can line up side by side, reviews from real users, walkthroughs, and a feed of what's just landed.",
   },
@@ -130,6 +133,7 @@ export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
     name: "FileGo",
     status: "coming-soon",
     href: "/apps/filego/",
+    image: "/apps/filego.png",
     description:
       "Send a file from your phone to your laptop \u2014 or someone else's \u2014 with no cables, no sign-up, and no emailing it to yourself. Pick the file, pick the device, and it's there.",
   },
@@ -140,6 +144,7 @@ export const PRODUCTS_ACQUISITION: Product[] = [
     name: "Grablink",
     status: "acquisition",
     href: "/apps/grablink/",
+    image: "/apps/grablink.png",
     description:
       "Spotted a video you want to keep? Paste the link from Instagram, YouTube, or ShareChat and it saves straight to your phone \u2014 no account, nothing extra to install.",
   },
@@ -147,6 +152,7 @@ export const PRODUCTS_ACQUISITION: Product[] = [
     name: "Contactly",
     status: "acquisition",
     href: "/apps/contactly/",
+    image: "/apps/contactly.png",
     description:
       "If your address book is a mess, this sorts it out \u2014 merge the duplicates, add notes and tags, keep a backup, and share a tidy card whenever someone asks for your details.",
   },
@@ -154,6 +160,7 @@ export const PRODUCTS_ACQUISITION: Product[] = [
     name: "FileGo",
     status: "acquisition",
     href: "/apps/filego-acq/",
+    image: "/apps/filego-acq.png",
     description:
       "FileGo, ready to hand over \u2014 the finished app together with its full codebase. A solid running start if cross-device sharing is a space you're thinking about entering.",
   },
