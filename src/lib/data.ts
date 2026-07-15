@@ -25,11 +25,11 @@ import type {
 } from "@/types";
 
 export const SITE = {
-  name: "ABC Group",
-  email: "hello@abcgroup.dev",
+  name: "Ganga Group",
+  email: "ganga6group@gmail.com",
   location: "Surat, Gujarat, India",
   tagline: "Building thoughtful mobile products with care, one release at a time.",
-  copyright: "\u00A9 2026 ABC Group. All rights reserved.",
+  copyright: "\u00A9 2026 Ganga Group. All rights reserved.",
 } as const;
 
 /** Offset (px) applied when smooth-scrolling to a section, matching the original. */
@@ -56,7 +56,7 @@ export const ABOUT = {
   eyebrow: "The company",
   heading: "Small by choice. Careful by default.",
   paragraphs: [
-    "I started ABC Group to build software the way I always wanted to \u2014 carefully, and with real attention on each piece. Staying small isn't a constraint; it's the whole point. It means every app gets looked after properly instead of being rushed out the door.",
+    "I started Ganga Group to build software the way I always wanted to \u2014 carefully, and with real attention on each piece. Staying small isn't a constraint; it's the whole point. It means every app gets looked after properly instead of being rushed out the door.",
     "When something calls for a skill outside my wheelhouse, I bring in freelancers I've worked with and trust \u2014 never a faceless team. And I don't disappear after launch. I stay with an app for the long haul, fixing and improving it, because anything people rely on deserves to keep working.",
   ],
   tags: ["Product First", "Modern Engineering", "Thoughtful Design", "Built to Last"],

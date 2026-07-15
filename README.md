@@ -1,6 +1,6 @@
-# ABC Group — Landing Page
+# Ganga Group — Landing Page
 
-A production-ready **Next.js 15 (App Router) + TypeScript + Tailwind CSS** conversion of the ABC Group static landing page. The design is preserved pixel-for-pixel — layout, typography, spacing, colours, dark/light theming, responsiveness, and every interaction — while the codebase is reorganised into typed, reusable React components.
+A production-ready **Next.js 15 (App Router) + TypeScript + Tailwind CSS** conversion of the Ganga Group static landing page. The design is preserved pixel-for-pixel — layout, typography, spacing, colours, dark/light theming, responsiveness, and every interaction — while the codebase is reorganised into typed, reusable React components.
 
 ## Tech stack
 

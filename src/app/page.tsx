@@ -13,7 +13,7 @@ import { Inquiry } from "@/sections/Inquiry";
 import { Contact } from "@/sections/Contact";
 
 /**
- * The ABC Group single-page site. Order and dividers mirror the original:
+ * The Ganga Group single-page site. Order and dividers mirror the original:
  * hero → about → (accent rule) → services → apps → (violet rule) → tech →
  * inquiry → contact, all inside the themed root with the fixed scroll bar,
  * ambient background and navigation.

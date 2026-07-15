@@ -1,14 +1,14 @@
 import { ScrollLink } from "@/components/common/ScrollLink";
 
 /**
- * "ABC Group" wordmark — gradient "ABC" + solid "Group". Renders as a
+ * "Ganga Group" wordmark — gradient "Ganga" + solid "Group". Renders as a
  * scroll-link in the navbar (to #home) and as a plain mark in the footer.
  */
 export function Logo({ as = "link" }: { as?: "link" | "plain" }) {
   const inner = (
     <>
       <span className="bg-[linear-gradient(120deg,var(--accent),var(--accent-light))] bg-clip-text text-transparent">
-        ABC
+        Ganga
       </span>
       <span className="ml-[6px] text-text">Group</span>
     </>
@@ -22,7 +22,7 @@ export function Logo({ as = "link" }: { as?: "link" | "plain" }) {
   }
 
   return (
-    <ScrollLink href="#home" className={classes} aria-label="ABC Group, back to top">
+    <ScrollLink href="#home" className={classes} aria-label="Ganga Group, back to top">
       {inner}
     </ScrollLink>
   );

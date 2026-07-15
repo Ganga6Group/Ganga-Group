@@ -68,7 +68,7 @@ export async function POST(request: Request) {
   }
 
   const to = process.env.INQUIRY_TO || SITE.email;
-  const from = process.env.INQUIRY_FROM || "ABC Group <onboarding@resend.dev>";
+  const from = process.env.INQUIRY_FROM || "Ganga Group <onboarding@resend.dev>";
 
   const rows: Array<[string, string]> = [
     ["Name", data.name],

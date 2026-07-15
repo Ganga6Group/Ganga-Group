@@ -1,8 +1,8 @@
 {
-  "name": "abc-group",
+  "name": "ganga-group",
   "version": "1.0.0",
   "private": true,
-  "description": "ABC Group landing page — Next.js 15 conversion.",
+  "description": "Ganga Group landing page — Next.js 15 conversion.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

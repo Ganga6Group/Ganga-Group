@@ -25,11 +25,11 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ABC Group — Thoughtful mobile products",
+  title: "Ganga Group — Thoughtful mobile products",
   description:
-    "ABC Group is a lean product company building thoughtful mobile apps with care — from design and development to publishing, ASO and long-term support.",
+    "Ganga Group is a lean product company building thoughtful mobile apps with care — from design and development to publishing, ASO and long-term support.",
   keywords: [
-    "ABC Group",
+    "Ganga Group",
     "mobile app development",
     "Android",
     "Flutter",
@@ -37,15 +37,15 @@ export const metadata: Metadata = {
     "app acquisition",
   ],
   openGraph: {
-    title: "ABC Group — Thoughtful mobile products",
+    title: "Ganga Group — Thoughtful mobile products",
     description:
       "A small product company building thoughtful mobile apps with care, one release at a time.",
-    siteName: "ABC Group",
+    siteName: "Ganga Group",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ABC Group — Thoughtful mobile products",
+    title: "Ganga Group — Thoughtful mobile products",
     description:
       "A small product company building thoughtful mobile apps with care, one release at a time.",
   },
