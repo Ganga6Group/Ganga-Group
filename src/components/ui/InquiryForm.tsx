@@ -4,19 +4,17 @@ import { useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { INQUIRY_SELECTS } from "@/lib/data";
+import { validateInquiry, type InquiryField } from "@/lib/inquiryValidation";
 import type { SelectField } from "@/types";
 import { useHeavyEffects } from "@/hooks/useHeavyEffects";
 import { useMagnetic } from "@/hooks/useMagnetic";
 
-/** Required fields and email pattern — identical to the original validator. */
-const REQUIRED = ["name", "email", "type", "description"] as const;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const SUCCESS = "Thanks \u2014 your message is on its way. I\u2019ll be in touch soon.";
-const ERROR = "Please fill in the highlighted fields.";
+const SUCCESS = "Thanks — your message is on its way. I’ll be in touch soon.";
+const ERROR = "Please fix the highlighted fields.";
 const SEND_ERROR = "Something went wrong sending your message. Please try again.";
 
 type Status = { message: string; tone: "error" | "success" } | null;
+type Errors = Partial<Record<InquiryField, string>>;
 
 const fieldBase =
   "w-full box-border rounded-[11px] border border-border bg-surface px-[15px] py-[13px] font-sans text-[15px] text-text outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(79,156,255,0.14)]";
@@ -34,39 +32,40 @@ function Label({ htmlFor, children, optional }: { htmlFor: string; children: str
 }
 
 /**
- * The project inquiry form. Validates name/email/type/description on the
- * client, highlighting bad fields in red (clearing as you edit). On a valid
- * submit it POSTs to /api/inquiry, which emails the message via Resend; the
- * button is disabled while sending and a success or error status is shown.
+ * The project inquiry form. Validates every field against the shared rules in
+ * [inquiryValidation], showing a specific message beneath each bad field (and
+ * clearing it as you edit). On a valid submit it POSTs to /api/inquiry, which
+ * re-validates and emails the message via Resend; the button is disabled while
+ * sending and a success or error status is announced.
  */
 export function InquiryForm() {
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const heavy = useHeavyEffects();
   const buttonRef = useMagnetic<HTMLButtonElement>(heavy);
 
-  const clearError = (name: string) =>
-    setErrors((prev) => (prev[name] ? { ...prev, [name]: false } : prev));
+  const clearError = (name: InquiryField) =>
+    setErrors((prev) => (prev[name] ? { ...prev, [name]: undefined } : prev));
 
-  const cls = (name: string) => cn(fieldBase, errors[name] && fieldError);
+  const cls = (name: InquiryField) => cn(fieldBase, errors[name] && fieldError);
+
+  /** Accessible props tying a field to its inline error message. */
+  const aria = (name: InquiryField) =>
+    errors[name]
+      ? ({ "aria-invalid": true, "aria-describedby": `inq-${name}-err` } as const)
+      : {};
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitting) return;
     const form = event.currentTarget;
-    const data = new FormData(form);
+    const data = Object.fromEntries(new FormData(form).entries());
 
-    const next: Record<string, boolean> = {};
-    for (const name of REQUIRED) {
-      if (!String(data.get(name) ?? "").trim()) next[name] = true;
-    }
-    const email = String(data.get("email") ?? "").trim();
-    if (email && !EMAIL_RE.test(email)) next.email = true;
-
-    setErrors(next);
-    const bad = Object.keys(next).filter((k) => next[k]);
+    const found = validateInquiry(data);
+    setErrors(found);
+    const bad = Object.keys(found) as InquiryField[];
     if (bad.length) {
       const first = form.elements.namedItem(bad[0]);
       if (first instanceof HTMLElement) first.focus();
@@ -77,23 +76,21 @@ export function InquiryForm() {
     setSubmitting(true);
     setStatus(null);
     try {
-      const payload = Object.fromEntries(data.entries());
       const res = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(data),
       });
       if (!res.ok) {
         const info = (await res.json().catch(() => null)) as
-          | { error?: string; fields?: string[] }
+          | { error?: string; fields?: Errors }
           | null;
-        if (info?.fields?.length) {
-          setErrors(Object.fromEntries(info.fields.map((f) => [f, true])));
-        }
+        if (info?.fields && Object.keys(info.fields).length) setErrors(info.fields);
         setStatus({ message: info?.error ?? SEND_ERROR, tone: "error" });
         return;
       }
       setStatus({ message: SUCCESS, tone: "success" });
+      setErrors({});
       form.reset();
     } catch {
       setStatus({ message: SEND_ERROR, tone: "error" });
@@ -102,27 +99,39 @@ export function InquiryForm() {
     }
   };
 
-  const renderSelect = (field: SelectField) => (
-    <div className="flex flex-col gap-[8px]">
-      <Label htmlFor={`inq-${field.name}`} optional={field.optional}>
-        {field.label}
-      </Label>
-      <select
-        id={`inq-${field.name}`}
-        name={field.name}
-        defaultValue=""
-        onChange={() => clearError(field.name)}
-        className={cn(cls(field.name), "abc-select")}
-      >
-        <option value="" disabled>
-          {field.placeholder}
-        </option>
-        {field.options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
-      </select>
-    </div>
-  );
+  const FieldError = ({ name }: { name: InquiryField }) =>
+    errors[name] ? (
+      <span id={`inq-${name}-err`} className="font-sans text-[12.5px] leading-snug text-[#ff8a8a]">
+        {errors[name]}
+      </span>
+    ) : null;
+
+  const renderSelect = (field: SelectField) => {
+    const name = field.name as InquiryField;
+    return (
+      <div className="flex flex-col gap-[8px]">
+        <Label htmlFor={`inq-${name}`} optional={field.optional}>
+          {field.label}
+        </Label>
+        <select
+          id={`inq-${name}`}
+          name={name}
+          defaultValue=""
+          onChange={() => clearError(name)}
+          className={cn(cls(name), "abc-select")}
+          {...aria(name)}
+        >
+          <option value="" disabled>
+            {field.placeholder}
+          </option>
+          {field.options.map((option) => (
+            <option key={option}>{option}</option>
+          ))}
+        </select>
+        <FieldError name={name} />
+      </div>
+    );
+  };
 
   return (
     <form
@@ -139,7 +148,9 @@ export function InquiryForm() {
           placeholder="Your name"
           onInput={() => clearError("name")}
           className={cls("name")}
+          {...aria("name")}
         />
+        <FieldError name="name" />
       </div>
 
       <div className="flex flex-col gap-[8px]">
@@ -164,7 +175,9 @@ export function InquiryForm() {
           placeholder="you@email.com"
           onInput={() => clearError("email")}
           className={cls("email")}
+          {...aria("email")}
         />
+        <FieldError name="email" />
       </div>
 
       <div className="flex flex-col gap-[8px]">
@@ -176,8 +189,11 @@ export function InquiryForm() {
           name="phone"
           type="tel"
           placeholder="+91 00000 00000"
+          onInput={() => clearError("phone")}
           className={cls("phone")}
+          {...aria("phone")}
         />
+        <FieldError name="phone" />
       </div>
 
       {renderSelect(INQUIRY_SELECTS.type)}
@@ -202,16 +218,19 @@ export function InquiryForm() {
           id="inq-desc"
           name="description"
           rows={4}
-          placeholder={"Tell me a little about what you have in mind\u2026"}
+          placeholder={"Tell me a little about what you have in mind…"}
           onInput={() => clearError("description")}
           className={cn(cls("description"), "min-h-[110px] resize-y")}
+          {...aria("description")}
         />
+        <FieldError name="description" />
       </div>
 
       <div className="col-span-2 flex flex-wrap items-center gap-[16px]">
         <button
           ref={buttonRef}
           type="submit"
+          disabled={submitting}
           className={cn(
             "relative inline-flex cursor-pointer items-center gap-[10px] overflow-hidden rounded-[12px] border-none px-[30px] py-[15px] font-sans text-[15.5px] font-semibold text-[#04122b] shadow-[0_8px_22px_-14px_var(--accent)] [background:linear-gradient(120deg,var(--accent),var(--accent-light))]",
             submitting && "pointer-events-none opacity-70",
@@ -221,7 +240,7 @@ export function InquiryForm() {
             data-shine
             className="absolute bottom-0 left-0 top-0 w-2/5 -translate-x-[140%] -skew-x-[18deg] [background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent)]"
           />
-          Send inquiry
+          {submitting ? "Sending…" : "Send inquiry"}
           <ArrowRight size={16} strokeWidth={2} />
         </button>
         <span

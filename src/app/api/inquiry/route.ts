@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { SITE } from "@/lib/data";
+import { INQUIRY_FIELDS, MAX_LENGTH, validateInquiry, type InquiryField } from "@/lib/inquiryValidation";
 
 /**
- * Inquiry endpoint. Receives the contact form payload, validates it
- * server-side (never trust the client), and emails it via Resend.
+ * Inquiry endpoint. Receives the contact form payload, re-validates it
+ * server-side with the shared rules ([inquiryValidation]) — never trust the
+ * client — then emails it to the site owner via Resend so a new inquiry lands
+ * in the inbox immediately.
  *
- * Configure in the environment (e.g. Vercel project settings):
+ * Configure in the environment (e.g. Vercel project settings / .env.local):
  *   RESEND_API_KEY  — required; your Resend API key.
  *   INQUIRY_TO      — where inquiries are delivered (defaults to SITE.email).
  *   INQUIRY_FROM    — verified sender. Defaults to Resend's shared test
  *                     address, which works before you verify a domain.
  */
 
-const REQUIRED = ["name", "email", "type", "description"] as const;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/** Trim, coerce to string, and cap length to keep payloads sane. */
-function field(value: unknown, max = 5000): string {
-  return String(value ?? "").trim().slice(0, max);
+/** Trim, coerce to string, and cap length per field. */
+function clean(value: unknown, field: InquiryField): string {
+  return String(value ?? "").trim().slice(0, MAX_LENGTH[field]);
 }
 
 function escapeHtml(value: string): string {
@@ -37,22 +37,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const data = {
-    name: field(body.name, 200),
-    company: field(body.company, 200),
-    email: field(body.email, 320),
-    phone: field(body.phone, 60),
-    type: field(body.type, 120),
-    budget: field(body.budget, 120),
-    timeline: field(body.timeline, 200),
-    description: field(body.description),
-  };
+  // Normalise every known field to a trimmed, length-capped string.
+  const data = Object.fromEntries(
+    INQUIRY_FIELDS.map((field) => [field, clean(body[field], field)]),
+  ) as Record<InquiryField, string>;
 
-  const invalid: string[] = REQUIRED.filter((name) => !data[name]);
-  if (data.email && !EMAIL_RE.test(data.email)) invalid.push("email");
-  if (invalid.length) {
+  const fieldErrors = validateInquiry(data);
+  if (Object.keys(fieldErrors).length) {
     return NextResponse.json(
-      { error: "Please fill in the highlighted fields.", fields: invalid },
+      { error: "Please fix the highlighted fields.", fields: fieldErrors },
       { status: 422 },
     );
   }
@@ -82,14 +75,20 @@ export async function POST(request: Request) {
   ];
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
-  const html = `<h2>New inquiry — ${escapeHtml(SITE.name)}</h2><table>${rows
-    .map(
-      ([label, value]) =>
-        `<tr><td style="padding:4px 12px 4px 0;font-weight:600;vertical-align:top">${escapeHtml(
-          label,
-        )}</td><td style="padding:4px 0">${escapeHtml(value).replace(/\n/g, "<br>")}</td></tr>`,
-    )
-    .join("")}</table>`;
+  const html = `<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+    <h2 style="margin:0 0 4px">New inquiry — ${escapeHtml(SITE.name)}</h2>
+    <p style="margin:0 0 16px;color:#667">From ${escapeHtml(data.name)} &lt;${escapeHtml(
+      data.email,
+    )}&gt;</p>
+    <table style="border-collapse:collapse">${rows
+      .map(
+        ([label, value]) =>
+          `<tr><td style="padding:4px 14px 4px 0;font-weight:600;vertical-align:top;white-space:nowrap">${escapeHtml(
+            label,
+          )}</td><td style="padding:4px 0">${escapeHtml(value).replace(/\n/g, "<br>")}</td></tr>`,
+      )
+      .join("")}</table>
+  </div>`;
 
   try {
     const resend = new Resend(apiKey);
