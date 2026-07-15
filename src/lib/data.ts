@@ -108,15 +108,18 @@ export const LIVE_PRODUCT = {
   meta: "100+ installs \u00B7 Play Store",
   description:
     "Match the shades, clear the board, and see how long you can keep a streak going. It's the sort of quiet puzzle you pick up while the kettle boils.",
-  href: "/apps/colors-quad/",
+  href: "https://play.google.com/store/apps/details?id=com.ganga.colorsquad",
   image: "/apps/colors-quad.png",
 } as const;
+
+/** Shown on cards for apps that aren't published/linkable yet. */
+const MAINTENANCE_NOTICE = "\uD83D\uDEE0 Under maintenance \u2014 this listing is coming soon.";
 
 export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
   {
     name: "iLoveEmbroidery",
     status: "development",
-    href: "/apps/iloveembroidery/",
+    href: "https://play.google.com/store/apps/details?id=com.ganga.ilikeembroidery",
     image: "/apps/iloveembroidery.png",
     description:
       "Got an embroidery file but not the pricey desktop software? Open your Wilcom EMB and Tajima DST designs right on your phone, take a proper look, and send them on to whoever needs them.",
@@ -124,7 +127,7 @@ export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
   {
     name: "AI Discovery",
     status: "development",
-    href: "/apps/ai-discovery/",
+    href: "https://play.google.com/store/apps/details?id=com.ganga.aidiscovery",
     image: "/apps/ai-discovery.png",
     description:
       "The AI space moves quickly, so this keeps track for you. Browse 200+ tools with prices you can line up side by side, reviews from real users, walkthroughs, and a feed of what's just landed.",
@@ -132,7 +135,7 @@ export const PRODUCTS_IN_DEVELOPMENT: Product[] = [
   {
     name: "FileGo",
     status: "coming-soon",
-    href: "/apps/filego/",
+    href: "https://play.google.com/store/apps/details?id=com.ganga.filego",
     image: "/apps/filego.png",
     description:
       "Send a file from your phone to your laptop \u2014 or someone else's \u2014 with no cables, no sign-up, and no emailing it to yourself. Pick the file, pick the device, and it's there.",
@@ -143,7 +146,8 @@ export const PRODUCTS_ACQUISITION: Product[] = [
   {
     name: "Grablink",
     status: "acquisition",
-    href: "/apps/grablink/",
+    href: "#",
+    notice: MAINTENANCE_NOTICE,
     image: "/apps/grablink.png",
     description:
       "Spotted a video you want to keep? Paste the link from Instagram, YouTube, or ShareChat and it saves straight to your phone \u2014 no account, nothing extra to install.",
@@ -151,7 +155,8 @@ export const PRODUCTS_ACQUISITION: Product[] = [
   {
     name: "Contactly",
     status: "acquisition",
-    href: "/apps/contactly/",
+    href: "#",
+    notice: MAINTENANCE_NOTICE,
     image: "/apps/contactly.png",
     description:
       "If your address book is a mess, this sorts it out \u2014 merge the duplicates, add notes and tags, keep a backup, and share a tidy card whenever someone asks for your details.",
@@ -159,7 +164,7 @@ export const PRODUCTS_ACQUISITION: Product[] = [
   {
     name: "FileGo",
     status: "acquisition",
-    href: "/apps/filego-acq/",
+    href: "https://play.google.com/store/apps/details?id=com.ganga.filego",
     image: "/apps/filego-acq.png",
     description:
       "FileGo, ready to hand over \u2014 the finished app together with its full codebase. A solid running start if cross-device sharing is a space you're thinking about entering.",
@@ -207,6 +212,29 @@ export const INQUIRY = {
   heading: "Tell me about your project",
   body: "Whether it's a mobile app you've been sketching out, some Android or Flutter work you'd like a hand with, an improvement to something you've already shipped, or a chat about acquiring one of my apps \u2014 I'd genuinely like to hear about it. Tell me what you're thinking and I'll get back to you personally.",
 } as const;
+
+/**
+ * Dialling codes for the phone field's country selector. `code` is the unique
+ * key (dial codes aren't unique — US and Canada share +1). India leads as the
+ * default. Extend freely.
+ */
+export const COUNTRY_CODES: { code: string; label: string; dial: string; flag: string }[] = [
+  { code: "IN", label: "India", dial: "+91", flag: "🇮🇳" },
+  { code: "US", label: "United States", dial: "+1", flag: "🇺🇸" },
+  { code: "GB", label: "United Kingdom", dial: "+44", flag: "🇬🇧" },
+  { code: "CA", label: "Canada", dial: "+1", flag: "🇨🇦" },
+  { code: "AU", label: "Australia", dial: "+61", flag: "🇦🇺" },
+  { code: "AE", label: "United Arab Emirates", dial: "+971", flag: "🇦🇪" },
+  { code: "SA", label: "Saudi Arabia", dial: "+966", flag: "🇸🇦" },
+  { code: "SG", label: "Singapore", dial: "+65", flag: "🇸🇬" },
+  { code: "DE", label: "Germany", dial: "+49", flag: "🇩🇪" },
+  { code: "FR", label: "France", dial: "+33", flag: "🇫🇷" },
+  { code: "NL", label: "Netherlands", dial: "+31", flag: "🇳🇱" },
+  { code: "JP", label: "Japan", dial: "+81", flag: "🇯🇵" },
+  { code: "BR", label: "Brazil", dial: "+55", flag: "🇧🇷" },
+  { code: "ZA", label: "South Africa", dial: "+27", flag: "🇿🇦" },
+  { code: "NG", label: "Nigeria", dial: "+234", flag: "🇳🇬" },
+];
 
 export const INQUIRY_SELECTS: Record<"type" | "budget", SelectField> = {
   type: {

@@ -43,6 +43,11 @@ export interface Product {
   meta?: string;
   /** Optional app icon / screenshot in /public (e.g. "/apps/filego.png"). */
   image?: string;
+  /**
+   * When set, the card doesn't link out; clicking shows this notice instead
+   * (e.g. an app that isn't published yet). Takes precedence over `href`.
+   */
+  notice?: string;
 }
 
 export interface TechCategory {

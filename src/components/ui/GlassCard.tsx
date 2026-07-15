@@ -6,8 +6,13 @@ import { useHeavyEffects } from "@/hooks/useHeavyEffects";
 import { useTilt } from "@/hooks/useTilt";
 
 interface GlassCardProps {
-  as?: "div" | "a";
+  as?: "div" | "a" | "button";
   href?: string;
+  /** Anchor target/rel — pass "_blank" + "noopener noreferrer" for external. */
+  target?: string;
+  rel?: string;
+  /** Click handler (used by the button variant). */
+  onClick?: () => void;
   /** Cursor-follow 3D tilt (default: true). */
   tilt?: boolean;
   /** Participate in a parent SpotlightGroup's dim-siblings behaviour. */
@@ -27,6 +32,9 @@ const base = "rounded-[18px] border border-border bg-glass backdrop-blur-[10px]"
 export function GlassCard({
   as = "div",
   href,
+  target,
+  rel,
+  onClick,
   tilt = true,
   spotItem = false,
   tabIndex,
@@ -36,7 +44,12 @@ export function GlassCard({
   const heavy = useHeavyEffects();
   const tiltRef = useTilt<HTMLElement>(heavy && tilt);
 
-  const classes = cn(base, as === "a" && "block no-underline", className);
+  const classes = cn(
+    base,
+    as === "a" && "block no-underline",
+    as === "button" && "block w-full cursor-pointer text-left",
+    className,
+  );
   const spot = spotItem ? { "data-spot-item": "" } : {};
 
   if (as === "a") {
@@ -44,12 +57,30 @@ export function GlassCard({
       <a
         ref={tiltRef as Ref<HTMLAnchorElement>}
         href={href}
+        target={target}
+        rel={rel}
+        onClick={onClick}
         tabIndex={tabIndex}
         className={classes}
         {...spot}
       >
         {children}
       </a>
+    );
+  }
+
+  if (as === "button") {
+    return (
+      <button
+        ref={tiltRef as Ref<HTMLButtonElement>}
+        type="button"
+        onClick={onClick}
+        tabIndex={tabIndex}
+        className={classes}
+        {...spot}
+      >
+        {children}
+      </button>
     );
   }
 

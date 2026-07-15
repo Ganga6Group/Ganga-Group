@@ -14,6 +14,8 @@ export function LiveProductCard() {
       <GlassCard
         as="a"
         href={LIVE_PRODUCT.href}
+        target="_blank"
+        rel="noopener noreferrer"
         className="relative grid grid-cols-[minmax(200px,0.9fr)_1.3fr] items-center gap-[clamp(24px,4vw,48px)] overflow-hidden rounded-[24px] p-[clamp(26px,4vw,44px)] backdrop-blur-[12px]"
       >
         <div className="pointer-events-none absolute left-[-10%] top-[-40%] h-[340px] w-[340px] rounded-full opacity-[0.1] blur-[52px] [background:radial-gradient(circle,var(--green),transparent_65%)]" />

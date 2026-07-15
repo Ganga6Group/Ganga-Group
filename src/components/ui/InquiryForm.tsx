@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { INQUIRY_SELECTS } from "@/lib/data";
+import { COUNTRY_CODES, INQUIRY_SELECTS } from "@/lib/data";
 import { validateInquiry, type InquiryField } from "@/lib/inquiryValidation";
 import type { SelectField } from "@/types";
 import { useHeavyEffects } from "@/hooks/useHeavyEffects";
@@ -42,6 +42,7 @@ export function InquiryForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [country, setCountry] = useState("IN");
 
   const heavy = useHeavyEffects();
   const buttonRef = useMagnetic<HTMLButtonElement>(heavy);
@@ -61,7 +62,13 @@ export function InquiryForm() {
     event.preventDefault();
     if (submitting) return;
     const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    // Prefix the phone with the selected country's dialling code (only when a
+    // number was actually entered).
+    const dial = COUNTRY_CODES.find((c) => c.code === country)?.dial ?? "";
+    const localPhone = (data.phone ?? "").trim();
+    data.phone = localPhone ? `${dial} ${localPhone}` : "";
 
     const found = validateInquiry(data);
     setErrors(found);
@@ -91,6 +98,7 @@ export function InquiryForm() {
       }
       setStatus({ message: SUCCESS, tone: "success" });
       setErrors({});
+      setCountry("IN");
       form.reset();
     } catch {
       setStatus({ message: SEND_ERROR, tone: "error" });
@@ -184,15 +192,30 @@ export function InquiryForm() {
         <Label htmlFor="inq-phone" optional>
           Phone
         </Label>
-        <input
-          id="inq-phone"
-          name="phone"
-          type="tel"
-          placeholder="+91 00000 00000"
-          onInput={() => clearError("phone")}
-          className={cls("phone")}
-          {...aria("phone")}
-        />
+        <div className="flex gap-[8px]">
+          <select
+            aria-label="Country dialling code"
+            value={country}
+            onChange={(event) => setCountry(event.target.value)}
+            className="abc-select box-border w-[112px] shrink-0 rounded-[11px] border border-border bg-surface px-[12px] py-[13px] font-sans text-[14px] text-text outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(79,156,255,0.14)]"
+          >
+            {COUNTRY_CODES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.flag} {c.dial}
+              </option>
+            ))}
+          </select>
+          <input
+            id="inq-phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            placeholder="00000 00000"
+            onInput={() => clearError("phone")}
+            className={cn(cls("phone"), "min-w-0 flex-1")}
+            {...aria("phone")}
+          />
+        </div>
         <FieldError name="phone" />
       </div>
 
